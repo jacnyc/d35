@@ -13,6 +13,7 @@
     --yellow: #ffe066;
     --ink: #3a1f33;
     --hot: #ff2e93;
+    --bright: #2b4aa8;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -32,6 +33,7 @@
   #program { color: #fff; }
   .program li { padding: 10px 0; display: flex; gap: 16px; align-items: baseline; font-size: 19px; }
   .program .time { font-weight: 700; min-width: 64px; }
+  .program .note { display: block; font-size: 16px; opacity: .8; margin-top: 2px; }
 
   /* ---------- Landing ---------- */
   #home {
@@ -45,7 +47,7 @@
     padding: 20px; -webkit-tap-highlight-color: transparent;
   }
   .arrow.up { padding-top: calc(20px + env(safe-area-inset-top)); animation: nudgeUp 1.6s ease-in-out infinite; }
-  .arrow.down { padding-bottom: calc(20px + env(safe-area-inset-bottom)); animation: nudgeDown 1.6s ease-in-out infinite; }
+  .arrow.down { color: var(--bright); padding-bottom: calc(20px + env(safe-area-inset-bottom)); animation: nudgeDown 1.6s ease-in-out infinite; }
   .arrow svg { width: 28px; height: 28px; }
   @keyframes nudgeUp   { 50% { transform: translateY(-6px); } }
   @keyframes nudgeDown { 50% { transform: translateY(6px); } }
@@ -73,11 +75,13 @@
     -webkit-tap-highlight-color: transparent; transition: transform .15s;
   }
   .tile:active { transform: scale(.98); }
-  .tile .img { position: relative; aspect-ratio: 3 / 4; background: #f3d9e6; }
+  .tile { display: block; width: 100%; }
+  .tile .img { position: relative; aspect-ratio: 3 / 4; background: var(--blue); }
+  #wishes h2 { color: var(--blue); text-shadow: none; }
   .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .tile .placeholder {
     position: absolute; inset: 0; display: grid; place-items: center;
-    color: #c98aa9; font-size: 18px;
+    color: rgba(255,255,255,.5); font-size: 18px;
   }
   .tile .play {
     position: absolute; right: 14px; bottom: 14px; width: 52px; height: 52px; border-radius: 50%;
@@ -87,7 +91,7 @@
     content: ""; margin-left: 4px;
     border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent;
   }
-  .tile .name { padding: 14px 18px 16px; font-size: 22px; font-weight: 700; }
+  .caption { font-size: 18px; font-weight: 700; text-align: center; margin: 12px 0 10px; color: var(--bright); }
 
   /* ---------- Fullscreen player ---------- */
   .player { position: fixed; inset: 0; background: #000; z-index: 10; display: none; align-items: center; justify-content: center; }
@@ -124,7 +128,6 @@
 
 <section id="wishes">
   <div class="wrap">
-    <h2>birthday wishes</h2>
     <div class="tiles" id="tiles"></div>
   </div>
 </section>
@@ -137,22 +140,25 @@
 <script>
   /* ===== EDIT HERE ===== */
   const PROGRAM = [
-    { time: "[time]", what: "[activity]" },
-    { time: "[time]", what: "[activity]" },
-    { time: "[time]", what: "[activity]" },
-    { time: "[time]", what: "[activity]" },
+    { time: "11:00", what: "good morning!" },
+    { time: "12:15", what: "leave for afternoon activity" },
+    { time: "14:00", what: "activity!", note: "wear long pants and closed shoes (no thongs, sorry)" },
+    { time: "20:00", what: "evening surprise!" },
   ];
   // photo in /photos, video in /videos
   const PEOPLE = [
-    { name: "[Name]", photo: "photos/person1.jpg", video: "videos/person1.mp4" },
-    { name: "[Name]", photo: "photos/person2.jpg", video: "videos/person2.mp4" },
-    { name: "[Name]", photo: "photos/person3.jpg", video: "videos/person3.mp4" },
+    { caption: "from your family",               photo: "photos/1.jpg", video: "videos/1.mp4" },
+    { caption: "and mine",                       photo: "photos/2.jpg", video: "videos/2.mp4" },
+    { caption: "and my extended family :')",     photo: "photos/3.jpg", video: "videos/3.mp4" },
+    { caption: "from these friends from all over", photo: "photos/4.jpg", video: "videos/4.mp4" },
+    { caption: "and these legends in Amsterdam", photo: "photos/5.jpg", video: "videos/5.mp4" },
+    { caption: "aaand this Bonus courtesy of Ben", photo: "photos/6.jpg", video: "videos/6.mp4" },
   ];
   /* ===== END EDIT ===== */
 
   // Program
   document.getElementById("programList").innerHTML = PROGRAM.map(p =>
-    `<li><span class="time">${p.time}</span><span class="what">${p.what}</span></li>`).join("");
+    `<li><span class="time">${p.time}</span><span class="what">${p.what}${p.note ? `<span class="note">${p.note}</span>` : ""}</span></li>`).join("");
 
   // Wobbly title: split into letters, keep words together
   const title = document.getElementById("title");
@@ -169,10 +175,14 @@
     b.innerHTML = `
       <div class="img">
         <span class="placeholder">photo</span>
-        <img src="${p.photo}" alt="${p.name}" loading="lazy" onerror="this.remove()">
+        <img src="${p.photo}" alt="" loading="lazy" onerror="this.remove()">
       </div>`;
     b.onclick = () => openVideo(p.video);
-    tiles.appendChild(b);
+    const item = document.createElement("div");
+    const cap = document.createElement("p");
+    cap.className = "caption"; cap.textContent = p.caption;
+    item.append(cap, b);
+    tiles.appendChild(item);
   });
 
   // Fullscreen player
