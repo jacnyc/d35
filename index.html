@@ -79,17 +79,16 @@
   .tile .img { position: relative; aspect-ratio: 3 / 4; background: var(--blue); }
   #wishes h2 { color: var(--blue); text-shadow: none; }
   .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .tile .placeholder {
-    position: absolute; inset: 0; display: grid; place-items: center;
-    color: rgba(255,255,255,.5); font-size: 18px;
-  }
   .tile .play {
-    position: absolute; right: 14px; bottom: 14px; width: 52px; height: 52px; border-radius: 50%;
-    background: var(--hot); display: grid; place-items: center;
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 76px; height: 76px; border-radius: 50%;
+    background: rgba(255,255,255,.35); border: 2px solid rgba(255,255,255,.6);
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    display: grid; place-items: center;
   }
   .tile .play::after {
-    content: ""; margin-left: 4px;
-    border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent;
+    content: ""; margin-left: 6px;
+    border-left: 24px solid rgba(255,255,255,.95); border-top: 15px solid transparent; border-bottom: 15px solid transparent;
   }
   .caption { font-size: 18px; font-weight: 700; text-align: center; margin: 12px 0 10px; color: var(--bright); }
 
@@ -174,8 +173,8 @@
     b.className = "tile";
     b.innerHTML = `
       <div class="img">
-        <span class="placeholder">photo</span>
         <img src="${p.photo}" alt="" loading="lazy" onerror="this.remove()">
+        <span class="play"></span>
       </div>`;
     b.onclick = () => openVideo(p.video);
     const item = document.createElement("div");
